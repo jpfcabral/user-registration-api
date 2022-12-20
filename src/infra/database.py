@@ -25,7 +25,7 @@ class DBConnectionHandler:
 
             create_table_query = '''CREATE TABLE IF NOT EXISTS users
             (
-                ID INT PRIMARY KEY NOT NULL,
+                ID SERIAL PRIMARY KEY NOT NULL,
                 NAME TEXT NOT NULL,
                 EMAIL TEXT NOT NULL,
                 PASSWORD TEXT NOT NULL,
