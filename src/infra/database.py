@@ -27,7 +27,7 @@ class DBConnectionHandler:
             (
                 ID SERIAL PRIMARY KEY NOT NULL,
                 NAME TEXT NOT NULL,
-                EMAIL TEXT NOT NULL,
+                EMAIL TEXT NOT NULL UNIQUE,
                 PASSWORD TEXT NOT NULL,
                 CHECKED BOOL NOT NULL
             )
