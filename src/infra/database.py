@@ -23,7 +23,7 @@ class DBConnectionHandler:
             self.connection = self.__create_engine()
             self.cursor = self.connection.cursor()
 
-            create_table_query = '''CREATE TABLE users
+            create_table_query = '''CREATE TABLE IF NOT EXISTS users
             (
                 ID INT PRIMARY KEY NOT NULL,
                 NAME TEXT NOT NULL,
