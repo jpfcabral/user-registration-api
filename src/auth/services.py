@@ -59,7 +59,7 @@ class AuthService:
         # body = {'email': user.email, 'code': code}
         # requests.post('http://thirdpartservice.com', json=body, timeout=5)
 
-        return code
+        return validation_code
 
     def validate_code(self, user: User, code: int):
         if self._user_checked(user):
