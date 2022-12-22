@@ -10,4 +10,6 @@ class Settings: # pylint: disable=R0903:too-few-public-methods
     DB_PORT = os.getenv('DB_PORT', '5432')
     DB_NAME = os.getenv('DB_NAME', 'registration')
 
+    SECRET_KEY = os.getenv('SECRET_KEY', 'mysecretkey')
+
 settings = Settings()

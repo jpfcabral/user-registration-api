@@ -3,13 +3,14 @@ from random import randint
 from fastapi import HTTPException, status
 from fastapi import Depends
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
+from passlib.context import CryptContext
 from src.auth.models import ValidationCode
 from src.auth.repository import AuthRepository
 from src.users.models import User
 from src.users.repository import UserRepository
 
 security = HTTPBasic()
-
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 class AuthService:
     def __init__(self,
@@ -20,22 +21,22 @@ class AuthService:
         self.__auth_repository = auth_repository
 
     def authenticate(self, credentials: HTTPBasicCredentials = Depends(security)):
-        try:
-            email = credentials.username
-            password = credentials.password
+        email = credentials.username
+        password = credentials.password
 
-            user = self.__user_repository.read_by_email(email)
+        user = self.__user_repository.read_by_email(email)
 
-            assert user.password == password
+        if self._verify_password(password, user.password):
             return user
-        except:
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Invalid Crededentials') # pylint: disable=W0707:raise-missing-from
+
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Invalid Crededentials') # pylint: disable=W0707:raise-missing-from
 
     def create_user(self, user: User):
 
         if self.__user_repository.read_by_email(user.email) is not None:
             raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail='Email already used')
         try:
+            user.password = self._get_password_hash(user.password)
             user = self.__user_repository.insert(user=user)
             self.send_validation_code(user)
 
@@ -82,3 +83,10 @@ class AuthService:
         if user is None:
             return False
         return user.checked
+
+    def _verify_password(self, plain_password, hashed_password):
+        return pwd_context.verify(plain_password, hashed_password)
+
+
+    def _get_password_hash(self, password):
+        return pwd_context.hash(password)
