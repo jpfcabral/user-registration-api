@@ -1,9 +1,10 @@
+from typing import List
 from src.infra.database import DBConnectionHandler
 from src.users.models import User, UserDB
 
 class UserRepository:
 
-    def insert(self, user: User):
+    def insert(self, user: User) -> UserDB:
         name = user.name
         email = user.email
         password = user.password
@@ -21,7 +22,7 @@ class UserRepository:
                 database.connection.rollback()
                 raise
 
-    def read(self):
+    def read(self) -> List[UserDB]:
         with DBConnectionHandler() as database:
             try:
                 users = []
@@ -37,7 +38,7 @@ class UserRepository:
                 database.connection.rollback()
                 raise
 
-    def read_by_id(self, user_id: int):
+    def read_by_id(self, user_id: int) -> UserDB:
         with DBConnectionHandler() as database:
             try:
                 query = '''select * from users where id = {}'''
@@ -48,7 +49,7 @@ class UserRepository:
                 database.connection.rollback()
                 raise
 
-    def read_by_email(self, email: int):
+    def read_by_email(self, email: int) -> UserDB:
         with DBConnectionHandler() as database:
             try:
                 query = '''select * from users where email = %s'''
