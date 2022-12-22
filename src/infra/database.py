@@ -30,7 +30,13 @@ class DBConnectionHandler:
                 EMAIL TEXT NOT NULL UNIQUE,
                 PASSWORD TEXT NOT NULL,
                 CHECKED BOOL NOT NULL
-            )
+            );
+            CREATE TABLE IF NOT EXISTS codes
+            (
+                EMAIL TEXT NOT NULL UNIQUE,
+                CODE INT NOT NULL,
+                UPDATED_AT TIMESTAMP NOT NULL
+            );
             '''
 
             self.cursor.execute(create_table_query)

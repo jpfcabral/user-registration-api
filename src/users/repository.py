@@ -1,9 +1,14 @@
 from src.infra.database import DBConnectionHandler
-from src.users.models import UserDB
+from src.users.models import User, UserDB
 
 class UserRepository:
 
-    def insert(self, name: str, email: str, password: str, checked: bool):
+    def insert(self, user: User):
+        name = user.name
+        email = user.email
+        password = user.password
+        checked = False
+
         with DBConnectionHandler() as database:
             try:
                 query = '''insert into users (name, email, password, checked) values ('{}', '{}', '{}', {}) returning id'''
@@ -49,7 +54,10 @@ class UserRepository:
                 query = '''select * from users where email = %s'''
                 database.cursor.execute(query, (email,))
                 data = database.cursor.fetchone()
-                return UserDB(id=data[0], name=data[1], email=data[2], password=data[3], checked=data[4])
+
+                if data:
+                    return UserDB(id=data[0], name=data[1], email=data[2], password=data[3], checked=data[4])
+                return None
             except:
                 database.connection.rollback()
                 raise

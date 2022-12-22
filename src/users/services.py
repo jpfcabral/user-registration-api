@@ -7,9 +7,7 @@ class UserService:
 
     def create_user_db(self, user: User):
         user_db = UserDB.parse_obj(user)
-        return self.__user_repository.insert(user_db.name, user_db.email, user_db.password, user_db.checked)
+        return self.__user_repository.insert(user_db)
 
-    def get_user_from_db(self, user_id: int):
-        if not user_id:
-            return self.__user_repository.read()
-        return self.__user_repository.read_by_id(user_id)
+    def get_user_from_db(self, user: User):
+        return self.__user_repository.read_by_email(user.email)
