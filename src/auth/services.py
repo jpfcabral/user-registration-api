@@ -76,4 +76,7 @@ class AuthService:
 
     def _user_checked(self, user):
         user = self.__user_repository.read_by_email(user.email)
+
+        if user is None:
+            return False
         return user.checked
