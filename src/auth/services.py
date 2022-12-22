@@ -41,6 +41,10 @@ class AuthService:
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail='Error sending verification code') # pylint: disable=W0707:raise-missing-from
 
     def send_validation_code(self, user: User):
+
+        if self._user_checked(user):
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail='User already checked')
+
         code = randint(1000, 9999)
         validation_code = ValidationCode(email=user.email, code=code, updated_at=datetime.now())
 
@@ -53,6 +57,8 @@ class AuthService:
         # requests.post('http://thirdpartservice.com', json=body, timeout=5)
 
     def validate_code(self, user: User, code: int):
+        if self._user_checked(user):
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail='User already checked')
 
         validation_code = self.__auth_repository.read(user.email)
 
@@ -64,3 +70,7 @@ class AuthService:
             return self.__user_repository.update_checked_status(user_db.id)
 
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Invalid code')
+
+    def _user_checked(self, user):
+        user = self.__user_repository.read_by_email(user.email)
+        return user.checked
