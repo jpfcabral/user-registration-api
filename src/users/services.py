@@ -2,8 +2,8 @@ from src.users.models import User, UserDB
 from src.users.repository import UserRepository
 
 class UserService:
-    def __init__(self) -> None:
-        self.__user_repository = UserRepository()
+    def __init__(self, user_repository: UserRepository = UserRepository()) -> None:
+        self.__user_repository = user_repository
 
     def create_user_db(self, user: User):
         user_db = UserDB.parse_obj(user)

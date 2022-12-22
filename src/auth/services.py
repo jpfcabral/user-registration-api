@@ -12,9 +12,12 @@ security = HTTPBasic()
 
 
 class AuthService:
-    def __init__(self) -> None:
-        self.__user_repository = UserRepository()
-        self.__auth_repository = AuthRepository()
+    def __init__(self,
+    user_repository: UserRepository = UserRepository(),
+    auth_repository: AuthRepository = AuthRepository()
+    ) -> None:
+        self.__user_repository = user_repository
+        self.__auth_repository = auth_repository
 
     def authenticate(self, credentials: HTTPBasicCredentials = Depends(security)):
         try:
